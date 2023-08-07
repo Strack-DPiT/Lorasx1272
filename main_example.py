@@ -48,89 +48,44 @@ def read_data(addr):
     cs.value(1)
 
     return response[0]
+    '''
 def send_packet():
     addr = 0x0D
     data = 0x80
-    
+    send_data(addr, data)
+    read_data(0x0D)
+    '''
 def main():
+    # Sleep
+
     addr = 0b0000001
     data = 0b00000000
-    # Send the first data through SPI
     send_data(addr,data)
+    
+    # LoRa enable
 
     addr = 0b0000001
     data = 0b10000000
-    
-    # Send the first data through SPI
     send_data(addr,data)
-
+    
+    #TX INIT
     addr = 0b0000001
     data = 0b00000011
-    # Send the first data through SPI
     send_data(addr,data)
    # while True:
         # Read the response from the slave and print it
-        addr = 0b0000001
-        response_data = read_data(addr)
+    addr = 0b0000001
+    response_data = read_data(addr)
         
-        print(f"Received data from the slave: {response_data:08b}")  # Print the response in binary format
-        utime.sleep_ms(1000)
+    print(f"Received data from the slave: {response_data:08b}")  # Print the response in binary format
+    utime.sleep_ms(1000)
+    #Set FifoAddrPtr to FifoTxBaseAddrs
+    addr = 0b0001101
+    data = 0b10000000
+    send_data(addr,data)
+    response_data = read_data(addr)
+    print(f"Received data from the slave: {response_data:08b}")  # Print the response in binary format
+
 
 if __name__ == "__main__":
     main()
-
-
-# Continue with other code or functions after receiving the NAV-PVT message
-
-
-#Now the split method is called on the hex_data bytes object, and each message is printed without the 'b5' prefix. If you need to process each complete message separately, you can do it inside the loop where we are printing the messages. For example, you can check the message IDs and extract specific data from each message as needed.
-
-
-    #b"\xb5\x62\x01\x07": "NAV-PVT",
-
-#Now, the error message is inside quotes, as requested. This code will continuously send Message 4 and check for the desired message in the received data. If the received data contains invalid characters or incomplete bytes, it will print the error message and continue processing the next batch of data.
-
-    # Concatenate 'var_name' with 'b5' using an f-string
-    #string_concat = f"b5{var_name}"
-'''
-while True:
-    # Check if there is data available in the UART buffer
-    if uart.any():
-        # Read the data as bytes
-        raw_data = uart.read(uart.any())
-
-        # Convert raw_data to hexadecimal representation
-        hex_data = raw_data.hex()
-
-        # Process the hex_data as needed
-        # For example, print it or extract specific information from the message
-        print("Received Hex Data:", hex_data)
-   '''     
-
-# Function to calculate the Fletcher 8-bit checksum
-
-'''
-# Function to send UBX frame
-def send_ubx_frame(msg_class, msg_id, payload):
-    preamble_sync_char1 = b"\xB5"  # 0xB5 in hex
-    preamble_sync_char2 = b"\x62"  # 0x62 in hex
-
-    # Calculate payload length (N)
-    payload_length = len(payload)
-
-    # Send the UBX frame
-    uart.write(preamble_sync_char1)
-    uart.write(preamble_sync_char2)
-    uart.write(msg_class)
-    uart.write(msg_id)
-    uart.write(bytes([payload_length]))
-    uart.write(bytes(payload))
-    uart.write(b"\x1F")  # CK_A = 0x1F
-    uart.write(b"\x3E")  # CK_B = 0x3E
-
-# Example usage with correct message class (0x01), message ID (0x02), and 28-byte payload (all zeros)
-msg_class = b"\x01"
-msg_id = b"\x02"
-payload_data = b"\x00" * 28  # 28-byte payload data (all zeros)
-send_ubx_frame(msg_class, msg_id, payload_data)
-'''
