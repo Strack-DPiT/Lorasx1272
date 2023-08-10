@@ -103,7 +103,9 @@ def main():
     # write the packet to the FIFO MEMORY
     #0x66 0x70 0x76 0x66 0x69 0x78 0x69 0x74 0x71 0x75 0x61 0x64 0x63 0x6F 0x70 0x74
     addr = 0b0000000
-    data = 0b
+    data_values = [0b01100110, 0b01110000, 0b01110110, 0b01100110, 0b01101001, 0b01111000, 0b01101001, 0b01110100, 0b01110001, 0b01110101, 0b01100001, 0b01100100, 0b01100011, 0b01101111, 0b01110000, 0b01110100]
+    for data in data_values:
+        send_data(addr, data)
     #TX INIT
     addr = 0b0000001
     data = 0b00000011
@@ -122,4 +124,3 @@ def main():
 
 if __name__ == "__main__":
     main()
- 
