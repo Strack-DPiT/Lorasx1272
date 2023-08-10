@@ -11,8 +11,6 @@ import machine
 import utime
 
 # Initialize the SPI bus
-# Settings
-
 # Assign chip select (CS) pin (and start it high)
 cs = machine.Pin(13, machine.Pin.OUT)
 
@@ -92,14 +90,20 @@ def main():
     #RegModemConfig1
     addr = 0b0011101
     data = 0b00001101
+    send_data(addr,data)
     #coding rate and spreading factor !!!
     #set RegModemconfig2
     addr = 0b0011110
     data = 0b11000100
+    send_data(addr,data)
     #Set RegPayloadLength (0x22) 
     addr = 0b0100010
-    data = 0b00001000 #8 character payload
+    data = 0b00001000 #8 bytes payload
+    send_data(addr,data)
     # write the packet to the FIFO MEMORY
+    #0x66 0x70 0x76 0x66 0x69 0x78 0x69 0x74 0x71 0x75 0x61 0x64 0x63 0x6F 0x70 0x74
+    addr = 0b0000000
+    data = 0b
     #TX INIT
     addr = 0b0000001
     data = 0b00000011
@@ -118,3 +122,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+ 
