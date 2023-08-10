@@ -67,7 +67,30 @@ def main():
     addr = 0b0000001
     data = 0b10000000
     send_data(addr,data)
-    
+    # Standby mode enable
+
+    addr = 0b0000001
+    data = 0b10000001
+    send_data(addr,data)
+
+     #Set FifoAddrPtr to FifoTxBaseAddrs
+    addr = 0b0001101
+    data = 0b10000000
+    send_data(addr,data)
+     #Set RegPreambleLsb (Preamble length),left default = 12
+     #addr = 0b0100000
+    #Implicit header mode on 
+    #RegModemConfig1
+    addr = 0b0011101
+    data = 0b00001101
+    #coding rate and spreading factor !!!
+    #set RegModemconfig2
+    addr = 0b0011110
+    data = 0b11000100
+    #Set RegPayloadLength (0x22) 
+    addr = 0b0100010
+    data = 0b00001000 #8 character payload
+    # write the packet to the FIFO MEMORY
     #TX INIT
     addr = 0b0000001
     data = 0b00000011
@@ -79,10 +102,7 @@ def main():
         
     print(f"Received data from the slave: {response_data:08b}")  # Print the response in binary format
     utime.sleep_ms(1000)
-    #Set FifoAddrPtr to FifoTxBaseAddrs
-    addr = 0b0001101
-    data = 0b10000000
-    send_data(addr,data)
+    
     response_data = read_data(addr)
     print(f"Received data from the slave: {response_data:08b}")  # Print the response in binary format
 
