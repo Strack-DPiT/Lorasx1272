@@ -9,6 +9,7 @@ _________________________   _______________._______  ___.______________
 '''
 import machine
 import utime
+print('hello world')
 
 # Initialize the SPI bus
 # Assign chip select (CS) pin (and start it high)
@@ -50,7 +51,23 @@ def read_data(addr):
     cs.value(1)
 
     return response[0]
-def main();
+def main():
+    # Sleep
+
+    addr = 0b0000001
+    data = 0b00000000
+    send_data(addr,data)
+    
+    # LoRa enable
+
+    addr = 0b0000001
+    data = 0b10000000
+    send_data(addr,data)
+    
+    addr = 0b0000001
+    response_data = read_data(addr)   
+    print(f"Received data from the slave: {response_data:08b}")  # Print the response in binary format
+    
     #Set FifoAddrPtr to FifoRxBaseAddr
     addr = 0b0001101
     data = 0b00000000
@@ -66,7 +83,9 @@ def main();
     addr = 0b0000001
     data = 0b10000110
     #read number of bytes received so far 
-    addr = 0b0010011
-    response_data = read_data(addr)   
-    print(f"Received data from the slave: {response_data:08b}")  # Print the response in binary format
-    utime.sleep_ms(1000)
+    while True:
+        addr = 0b0010011
+        response_data = read_data(addr)   
+        print(f"Received data from the slave: {response_data:08b}")  # Print the response in binary format
+if __name__ == "__main__":
+    main()
