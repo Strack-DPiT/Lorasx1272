@@ -72,6 +72,11 @@ def main():
     addr = 0b0001101
     data = 0b00000000
     send_data(addr,data)
+    #Implicit header mode on 
+    #RegModemConfig1
+    addr = 0b0011101
+    data = 0b00001101
+    send_data(addr,data)
     
     
     # Standby mode enable
