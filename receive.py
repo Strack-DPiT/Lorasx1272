@@ -77,6 +77,14 @@ def main():
     addr = 0b0011101
     data = 0b00001101
     send_data(addr,data)
+    #set RegModemconfig2
+    addr = 0b0011110
+    data = 0b11000100
+    send_data(addr,data)
+    #Set RegPayloadLength (0x22) 
+    addr = 0b0100010
+    data = 0b00001000 #8 bytes payload
+    send_data(addr,data)
     
     
     # Standby mode enable
