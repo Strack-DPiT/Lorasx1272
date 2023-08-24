@@ -16,7 +16,7 @@ cs = machine.Pin(13, machine.Pin.OUT)
 
 # Initialize SPI
 spi = machine.SPI(1,
-                  baudrate=1000000,
+                  baudrate=70000, #spi frequency in hertz
                   polarity=0,
                   phase=0,
                   bits=8,
@@ -63,63 +63,86 @@ def send_packet():
     read_data(0x0D)
     '''
 def main():
-    # Sleep
-
-    addr = 0b0000001
-    data = 0b00000000
-    send_data(addr,data)
-    
-    # LoRa enable
-
-    addr = 0b0000001
-    data = 0b10000000
-    send_data(addr,data)
-    # Standby mode enable
-
-    addr = 0b0000001
-    data = 0b10000001
-    send_data(addr,data)
-
-     #Set FifoAddrPtr to FifoTxBaseAddrs
-    addr = 0b0001101
-    data = 0b10000000
-    send_data(addr,data)
-     #Set RegPreambleLsb (Preamble length),left default = 12
-     #addr = 0b0100000
-    #Implicit header mode on 
-    #RegModemConfig1
-    addr = 0b0011101
-    data = 0b00001101
-    send_data(addr,data)
-    #coding rate and spreading factor !!!
-    #set RegModemconfig2
-    addr = 0b0011110
-    data = 0b11000100
-    send_data(addr,data)
-    #Set RegPayloadLength (0x22) 
-    addr = 0b0100010
-    data = 0b00001000 #8 bytes payload
-    send_data(addr,data)
-    # write the packet to the FIFO MEMORY
-    #0x66 0x70 0x76 0x66 0x69 0x78 0x69 0x74 0x71 0x75 0x61 0x64 0x63 0x6F 0x70 0x74
-    addr = 0b0000000
-    data_values = [0b01100110, 0b01110000, 0b01110110, 0b01100110, 0b01101001, 0b01111000, 0b01101001, 0b01110100, 0b01110001, 0b01110101, 0b01100001, 0b01100100, 0b01100011, 0b01101111, 0b01110000, 0b01110100]
-    for data in data_values:
-        send_data(addr, data)
-    #TX INIT
-    addr = 0b0000001
-    data = 0b00000011
-    send_data(addr,data)
-   # while True:
-        # Read the response from the slave and print it
-    addr = 0b0000001
-    response_data = read_data(addr)
+        # Sleep
+    while True:
+        addr = 0b0000001
+        data = 0b00000000
+        send_data(addr,data)
         
-    print(f"Received data from the slave: {response_data:08b}")  # Print the response in binary format
-    utime.sleep_ms(1000)
-    
-    response_data = read_data(addr)
-    print(f"Received data from the slave: {response_data:08b}")  # Print the response in binary format
+        # LoRa enable
+
+        addr = 0b0000001
+        data = 0b10000000
+        send_data(addr,data)
+        # Standby mode enable
+
+        addr = 0b0000001
+        data = 0b10000001
+        send_data(addr,data)
+
+        #Set FifoAddrPtr to FifoTxBaseAddrs
+        addr = 0b0001101
+        data = 0b10000000
+        send_data(addr,data)
+        #Set RegPreambleLsb (Preamble length),left default = 12
+        #addr = 0b0100000
+        #Implicit header mode on 
+        #RegModemConfig1
+        addr = 0b0011101
+        data = 0b00001101
+        send_data(addr,data)
+        #coding rate and spreading factor !!!
+        #set RegModemconfig2
+        addr = 0b0011110
+        data = 0b11000100
+        send_data(addr,data)
+        
+        #Set RegDioMapping1 to 0x01
+        addr = 0b1000000
+        data = 0b01010101
+        send_data(addr,data)
+        #Set RegDioMapping2 to 0x01
+        addr = 0b1000001
+        data = 0b01010000
+        send_data(addr,data)
+        
+        addr = 0b1000000
+        response_data = read_data(addr)
+            
+        print(f"Received data from RegDioMapping1: {response_data:08b}")  # Print the response in binary format
+        utime.sleep_ms(30)
+        
+        addr = 0b1000001
+        response_data = read_data(addr)
+            
+        print(f"Received data from the RegDioMapping2: {response_data:08b}")  # Print the response in binary format
+        utime.sleep_ms(30)
+
+        #Set RegPayloadLength (0x22) 
+        addr = 0b0100010
+        data = 0b00001000 #8 bytes payload
+        send_data(addr,data)
+        # write the packet to the FIFO MEMORY
+        #0x66 0x70 0x76 0x66 0x69 0x78 0x69 0x74 0x71 0x75 0x61 0x64 0x63 0x6F 0x70 0x74
+        addr = 0b0000000
+        data_values = [0b01100110, 0b01110000, 0b01110110, 0b01100110, 0b01101001, 0b01111000, 0b01101001, 0b01110100, 0b01110001, 0b01110101, 0b01100001, 0b01100100, 0b01100011, 0b01101111, 0b01110000, 0b01110100]
+        for data in data_values:
+            send_data(addr, data)
+        
+        #TX INIT
+        addr = 0b0000001
+        data = 0b00000011
+        send_data(addr,data)
+    # while True:
+            # Read the response from the slave and print it
+        addr = 0b0000001
+        response_data = read_data(addr)
+            
+        print(f"Received data from the slave: {response_data:08b}")  # Print the response in binary format
+        utime.sleep_ms(1000)
+        
+        response_data = read_data(addr)
+        print(f"Received data from the slave: {response_data:08b}")  # Print the response in binary format
 
 
 if __name__ == "__main__":
