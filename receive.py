@@ -105,7 +105,7 @@ def main():
         #check if cad detected gpio20 == 3v3
 
         waiting_for_cad = True
-
+        '''
         while waiting_for_cad:
             # Read the digital value of the pin (0 for low, 1 for high)
             pin_value = machine.Pin(20).value()
@@ -140,6 +140,7 @@ def main():
                 response_data = read_data(addr)   
                 print(f"Received data from the Reg IRQ flags: {response_data:08b}")
                 waiting_for_cad = False  
+        '''
         #clear irq
         addr = 0b0010010
         data = 0b11111111
@@ -180,7 +181,27 @@ def main():
         data = 0b11111111
         send_data(addr,data)
         #read bytes received in the FIFO MEMORY
-        
+        data_values = [
+            0b00000000,
+            0b00000001,
+            0b00000010,
+            0b00000011,
+            0b00000100,
+            0b00000101,
+            0b00000110,
+            0b00000111,
+        ]
+
+        for counter, data_value in enumerate(data_values, start=1):
+            addr = 0b0001101
+            data = data_value
+            send_data(addr, data)
+            
+            # Read memory
+            addr = 0b0000000
+            response_data = read_data(addr)
+            
+            print(f"Received data from the FIFO#{counter}: {response_data:08b}")
         
 if __name__ == "__main__":
     main()
