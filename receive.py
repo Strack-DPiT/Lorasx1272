@@ -9,15 +9,13 @@ _________________________   _______________._______  ___.______________
 '''
 import machine
 import utime
-print('hello world')
-
 # Initialize the SPI bus
 # Assign chip select (CS) pin (and start it high)
 cs = machine.Pin(13, machine.Pin.OUT)
 
 # Initialize SPI
 spi = machine.SPI(1,
-                  baudrate=1000000,
+                  baudrate=1000,
                   polarity=0,
                   phase=0,
                   bits=8,
@@ -52,53 +50,137 @@ def read_data(addr):
 
     return response[0]
 def main():
-    # Sleep
+        # Sleep
+    #while True:
+        addr = 0b0000001
+        data = 0b00000000
+        send_data(addr,data)
+        
+        # LoRa enable
 
-    addr = 0b0000001
-    data = 0b00000000
-    send_data(addr,data)
-    
-    # LoRa enable
+        addr = 0b0000001
+        data = 0b10000000
+        send_data(addr,data)
+        
+        addr = 0b0000001
+        response_data = read_data(addr)   
+        print(f"Current operation mode: {response_data:08b}")
+        
+        #Set FifoAddrPtr to FifoRxBaseAddr
+        addr = 0b0001101
+        data = 0b00000000
+        send_data(addr,data)
+        #Implicit header mode on 
+        #RegModemConfig1
+        addr = 0b0011101
+        data = 0b00001101
+        send_data(addr,data)
+        #set RegModemconfig2
+        addr = 0b0011110
+        data = 0b11000100
+        send_data(addr,data)
+        #Set RegPayloadLength (0x22) 
+        addr = 0b0100010
+        data = 0b00001000 #8 bytes payload
+        send_data(addr,data)
+        
+        
+        # Standby mode enable
 
-    addr = 0b0000001
-    data = 0b10000000
-    send_data(addr,data)
-    
-    addr = 0b0000001
-    response_data = read_data(addr)   
-    print(f"Received data from the slave: {response_data:08b}")  # Print the response in binary format
-    
-    #Set FifoAddrPtr to FifoRxBaseAddr
-    addr = 0b0001101
-    data = 0b00000000
-    send_data(addr,data)
-    #Implicit header mode on 
-    #RegModemConfig1
-    addr = 0b0011101
-    data = 0b00001101
-    send_data(addr,data)
-    #set RegModemconfig2
-    addr = 0b0011110
-    data = 0b11000100
-    send_data(addr,data)
-    #Set RegPayloadLength (0x22) 
-    addr = 0b0100010
-    data = 0b00001000 #8 bytes payload
-    send_data(addr,data)
-    
-    
-    # Standby mode enable
+        addr = 0b0000001
+        data = 0b10000001
+        send_data(addr,data)
+        #Set RegDioMapping1 to 0x10
+        addr = 0b1000000
+        data = 0b10101010
+        send_data(addr,data)
+        #Set RegDioMapping2 to 0x10
+        addr = 0b1000001
+        data = 0b10100000
+        send_data(addr,data)
+        #channel activity mode detector enable
+        addr = 0b0000001
+        data = 0b10000111
+        send_data(addr,data)
+        #check if cad detected gpio20 == 3v3
 
-    addr = 0b0000001
-    data = 0b10000001
-    send_data(addr,data)
-    #mode request RXsingle
-    addr = 0b0000001
-    data = 0b10000110
-    #read number of bytes received so far 
-    while True:
+        waiting_for_cad = True
+
+        while waiting_for_cad:
+            # Read the digital value of the pin (0 for low, 1 for high)
+            pin_value = machine.Pin(20).value()
+    
+            if pin_value == 0:
+                print("Waiting for CAD")
+            elif pin_value == 1:
+                print("CAD detected")
+                #read RegFrMsb
+                addr = 0b0000110
+                response_data = read_data(addr)   
+                print(f"Received data from the RegFrMsb: {response_data:08b}")
+                #read RegFrMib
+                addr = 0b0000111
+                response_data = read_data(addr)
+                print(f"Received data from the RegFrMib: {response_data:08b}")
+                #read RegFrLsb
+                addr = 0b0001000
+                response_data = read_data(addr)
+                print(f"Received data from the RegFrMib: {response_data:08b}")
+                #read RegModemConfig1
+                addr = 0b0011101
+                response_data = read_data(addr)
+                print(f"Received data from the RegModemConfig1: {response_data:08b}")
+                #read RegModemConfig2
+                addr = 0b0011110
+                response_data = read_data(addr)
+                print(f"Received data from the RegModemConfig2: {response_data:08b}")
+
+
+                addr = 0b0010010
+                response_data = read_data(addr)   
+                print(f"Received data from the Reg IRQ flags: {response_data:08b}")
+                waiting_for_cad = False  
+        #clear irq
+        addr = 0b0010010
+        data = 0b11111111
+        send_data(addr,data)
+    # Add some delay to avoid continuous looping
+        utime.sleep_ms(100)  # Sleep for 100 milliseconds
+        #remap Dio 0,1,2,3,4,5 to default 
+        #Set RegDioMapping1 to default
+        addr = 0b1000000
+        data = 0b00000000
+        send_data(addr,data)
+        #Set RegDioMapping2 to default
+        addr = 0b1000001
+        data = 0b00000000
+        send_data(addr,data)
+        #mode request RXsingle
+        addr = 0b0000001
+        data = 0b10000110
+        send_data(addr,data)
+        utime.sleep_ms(1000)
+        
+        #maximum timeout
+        addr = 0b0011111
+        data = 0b11001000
+        send_data(addr,data)
+        '''
+        #read FIFO addr pointer
+        addr = 0b0001101
+        response_data = read_data(addr)   
+        print(f"Current FIFO addr ptr: {response_data:08b}")
+        '''
+        #read number of bytes received so far 
         addr = 0b0010011
         response_data = read_data(addr)   
-        print(f"Received data from the slave: {response_data:08b}")  # Print the response in binary format
+        print(f"Received number of bytes: {response_data:08b}")  # Print the response in binary format
+        #clear irq
+        addr = 0b0010010
+        data = 0b11111111
+        send_data(addr,data)
+        #read bytes received in the FIFO MEMORY
+        
+        
 if __name__ == "__main__":
     main()
