@@ -12,7 +12,8 @@ import utime
 # Initialize the SPI bus
 # Assign chip select (CS) pin (and start it high)
 cs = machine.Pin(13, machine.Pin.OUT)
-
+switch_receive = machine.Pin(27, machine.Pin.OUT)
+switch_transmit = machine.Pin(27, machine.Pin.OUT)
 # Initialize SPI
 spi = machine.SPI(1,
                   baudrate=1000,
