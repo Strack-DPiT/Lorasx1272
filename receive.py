@@ -176,8 +176,8 @@ def main():
         '''
         #read number of bytes received so far 
         addr = 0b0010011
-        response_data = read_data(addr):
-           while response_data = 0b00000000
+        response_data = read_data(addr)
+        while response_data = 0b00000000:
               addr = 0b0010011
               response_data = read_data(addr)
               print(f"Waiting for packet")
