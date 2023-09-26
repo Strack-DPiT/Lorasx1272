@@ -13,7 +13,7 @@ import utime
 # Assign chip select (CS) pin (and start it high)
 cs = machine.Pin(13, machine.Pin.OUT)
 switch_receive = machine.Pin(27, machine.Pin.OUT)
-switch_transmit = machine.Pin(27, machine.Pin.OUT)
+switch_transmit = machine.Pin(28, machine.Pin.OUT)
 # Initialize SPI
 spi = machine.SPI(1,
                   baudrate=1000,
@@ -161,6 +161,7 @@ def main():
         addr = 0b0000001
         data = 0b10000110
         send_data(addr,data)
+        switch_recieve.value(1)
         utime.sleep_ms(1000)
         
         #maximum timeout
@@ -175,8 +176,15 @@ def main():
         '''
         #read number of bytes received so far 
         addr = 0b0010011
-        response_data = read_data(addr)   
-        print(f"Received number of bytes: {response_data:08b}")  # Print the response in binary format
+        response_data = read_data(addr)
+           while response_data = 0b00000000:
+              addr = 0b0010011
+              response_data = read_data(addr)
+              print(f"Waiting for packet")
+        
+        
+        print(f"Received packet number of bytes: {response_data:08b}")  # Print the response in binary format
+        switch_recieve.value(0)
         #clear irq
         addr = 0b0010010
         data = 0b11111111
