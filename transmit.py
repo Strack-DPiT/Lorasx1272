@@ -13,8 +13,8 @@ import utime
 # Initialize the SPI bus
 # Assign chip select (CS) pin (and start it high)
 cs = machine.Pin(13, machine.Pin.OUT)
-switch_receive = machine.Pin(27, machine.Pin.OUT)
-switch_transmit = machine.Pin(28, machine.Pin.OUT)
+switch_receive = machine.Pin(15, machine.Pin.OUT)
+switch_transmit = machine.Pin(14, machine.Pin.OUT)
 # Initialize SPI
 spi = machine.SPI(1,
                   baudrate=70000, #spi frequency in hertz
@@ -58,7 +58,6 @@ def read_data(addr):
     return response[0]
 
 def send_packet(byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8):
-        # Sleep
     while True:
         addr = 0b0000001
         data = 0b00000000
@@ -129,8 +128,8 @@ def send_packet(byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8):
         data = 0b00000011
         send_data(addr,data)
         switch_transmit.value(1)
-    # while True:
-            # Read the response from the slave and print it
+        # while True:
+        # Read the response from the slave and print it
         addr = 0b0000001
         response_data = read_data(addr)
             
@@ -142,5 +141,4 @@ def send_packet(byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8):
         switch_transmit.value(0)
 
 
-if __name__ == "__main__":
-    main()
+send_packet(0b00000001,0b00000010,0b00000011,0b00000100,0b00000101,0b00000110,0b00000111,0b00001000)
