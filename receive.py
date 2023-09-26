@@ -161,7 +161,7 @@ def main():
         addr = 0b0000001
         data = 0b10000110
         send_data(addr,data)
-        switch_recieve.value(1)
+        switch_receive.value(1)
         utime.sleep_ms(1000)
         
         #maximum timeout
@@ -184,7 +184,7 @@ def main():
         
         
         print(f"Received packet number of bytes: {response_data:08b}")  # Print the response in binary format
-        switch_recieve.value(0)
+        switch_receive.value(0)
         #clear irq
         addr = 0b0010010
         data = 0b11111111
