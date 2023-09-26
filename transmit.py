@@ -14,7 +14,7 @@ import utime
 # Assign chip select (CS) pin (and start it high)
 cs = machine.Pin(13, machine.Pin.OUT)
 switch_receive = machine.Pin(27, machine.Pin.OUT)
-switch_transmit = machine.Pin(27, machine.Pin.OUT)
+switch_transmit = machine.Pin(28, machine.Pin.OUT)
 # Initialize SPI
 spi = machine.SPI(1,
                   baudrate=70000, #spi frequency in hertz
