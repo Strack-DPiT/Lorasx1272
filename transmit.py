@@ -134,6 +134,7 @@ def main():
         addr = 0b0000001
         data = 0b00000011
         send_data(addr,data)
+        switch_transmit.value(1)
     # while True:
             # Read the response from the slave and print it
         addr = 0b0000001
@@ -144,6 +145,7 @@ def main():
         
         response_data = read_data(addr)
         print(f"Received data from the slave: {response_data:08b}")  # Print the response in binary format
+        switch_transmit.value(0)
 
 
 if __name__ == "__main__":
