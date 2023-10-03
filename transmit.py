@@ -58,7 +58,7 @@ def read_data(addr):
     return response[0]
 
 def send_packet(byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8):
-    while True:
+        #sleep
         addr = 0b0000001
         data = 0b00000000
         send_data(addr,data)
@@ -139,6 +139,23 @@ def send_packet(byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8):
         response_data = read_data(addr)
         print(f"Received data from the slave: {response_data:08b}")  # Print the response in binary format
         switch_transmit.value(0)
+        
+def send_string(input_string):
+    if len(input_string) != 8:
+        print("Input string should be exactly 8 characters long.")
+        return
+            
+    binary_values = []
+    
+    # Iterate through each character in the input string
+    for char in input_string:
+        # Convert the character to its binary representation and append it to binary_values
+        binary_char = format(ord(char), '08b')
+        binary_values.append(int(binary_char, 2))
+            
+    send_packet(*binary_values)
 
+input_string = "ABCDEFGH"
+send_string(input_string)
 
-send_packet(0b00000001,0b00000010,0b00000011,0b00000100,0b00000101,0b00000110,0b00000111,0b00001000)
+#send_packet(0b00000001,0b00000010,0b00000011,0b00000100,0b00000101,0b00000110,0b00000111,0b00001000)
